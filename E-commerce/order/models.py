@@ -1,5 +1,8 @@
 from django.db import models
 from shop.models import Product
+import secrets
+from .paystack import Paystack
+
 
 
 class Order(models.Model):
@@ -11,6 +14,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
+    reference = models.CharField(max_length=200, blank=True)
 
     class Meta:
         ordering = ('-created',)
@@ -21,6 +25,31 @@ class Order(models.Model):
     def get_total_cost(self):
         return sum(item.get_cost() for item in self.items.all())
 
+    # This method will generate reference and ensure it's uniqueness
+    def save(self, *args, **kwargs):
+        while not self.reference:
+            reference = secrets.token_urlsafe(50)
+            object_with_similar_reference = Order.objects.filter(reference=reference)
+            if not object_with_similar_reference:
+                self.reference = reference
+        super().save(*args, **kwargs)
+
+    #This is a unique Paystack feature that ensures decimal fraction is eliminated
+    def amount_value(self):
+        return self.get_total_cost() * 100
+
+    # This method will payment
+    def payment_process(self):
+        amount = self.get_total_cost()
+        paystack = Paystack()
+        status,result = paystack.payment_process(self.reference, amount)
+        if status:
+            if result['amount'] / 100 == amount:
+                self.paid = True
+            self.save()
+        if self.paid:
+            return True
+        return False
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order,

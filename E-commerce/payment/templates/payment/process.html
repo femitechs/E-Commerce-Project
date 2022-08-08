@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Make payment of: NGN{{ cart.get_total_price }}
+{% endblock %}
+
+{% block content %}
+
+Make payment of: NGN{{ cart.get_total_price }}
+<hr>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<button id="paystack-button" onclick="payWithPayStack()"> Make Payment </button>
+
+<script>
+    function payWithPayStack(){
+        let currency = "NGN";
+        let plan = "";
+        let ref = "{{ order.reference }}";
+        let obj = {
+            key: "{{ paystack_public_key }}",
+            email: "{{ order.email }}",
+            amount: "{{ order.amount_value }}",
+            ref: ref,
+            callback: function(response){
+                window.location.href = "{% url 'payment:process' order.id %}"
+            }
+        }
+
+        if (Boolean(currency)){
+            obj.currency = currency.toUpperCase();
+        }
+        if (Boolean(plan)){
+            obj.plan = plan;
+        }
+        var handler = PaystackPop.setup(obj);
+        handler.openIframe();
+    }
+</script>
+
+{% endblock %}
+
+

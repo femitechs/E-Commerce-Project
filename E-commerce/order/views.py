@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from cart.cart import Cart
-from .models import OrderItem
+from .models import OrderItem, Order
 from .forms import OrderCreateForm
-
+from .tasks import order_created
+from django.conf import settings
 
 
 def order_create(request):
@@ -18,8 +20,12 @@ def order_create(request):
                                          quantity=item['quantity'])
             # clear the cart
             cart.clear()
-            
-            return render(request, 'order/created.html', {'order': order})                                           
+            # Launch assynchronous task
+            order_created.delay(order.id)
+            # Set the order in the current session using order_id session key
+            request.session['order_id'] = order.id
+            return render(request, 'payment/process.html', 
+                {'order': order, 'cart': cart, 'paystack_public_key': settings.PAYSTACK_PUBLIC_KEY})                                           
     else:
         form = OrderCreateForm()
     return render(request, 'order/create.html', {'cart': cart, 'form': form})

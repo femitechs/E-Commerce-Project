@@ -9,15 +9,15 @@
 
   <div class="order-info">
     <h3>Your order</h3>
-    <ul>
+    <ol>
       {% for item in cart %}
         <li>
           {{ item.quantity }}x {{ item.product.name }}
-          <span>${{ item.total_price }}</span>
+          <span>NGN{{ item.total_price }}</span>
         </li>
       {% endfor %}
-    </ul>
-    <p>Total: ${{ cart.get_total_price }}</p>
+    </ol>
+    <p>Total: NGN{{ cart.get_total_price }}</p>
   </div>
 
   <form method="post" class="order-form">

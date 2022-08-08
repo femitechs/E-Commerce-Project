@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'shop.apps.ShopConfig',
     'cart.apps.CartConfig',
     'order.apps.OrderConfig',
+    'payment.apps.PaymentConfig',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,18 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 CART_SESSION_ID = 'cart'
+
+EMAIL_BACKEND ='django.core.mail.backends.console.EmailBackend'
+
+# Celery settings
+
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# Paystack Keys
+
+PAYSTACK_PRIVATE_KEY = config("PAYSTACK_PRIVATE_KEY")
+
+PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY")
+
