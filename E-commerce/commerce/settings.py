@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'cart.apps.CartConfig',
     'order.apps.OrderConfig',
     'payment.apps.PaymentConfig',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -145,4 +146,6 @@ CELERY_TASK_SERIALIZER = 'json'
 PAYSTACK_PRIVATE_KEY = config("PAYSTACK_PRIVATE_KEY")
 
 PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY")
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

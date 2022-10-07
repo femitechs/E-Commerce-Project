@@ -6,30 +6,36 @@
 {% endblock %}
 
 {% block content %}
-  <div id="sidebar">
-    <h3>Categories</h3>
-    <ul>
-      <li {% if not category %}class="selected"{% endif %}>
-        <a href="{% url "shop:index" %}">All</a>
-      </li>
-      {% for cat in categories %}
-        <li {% if category.slug == cat.slug %}class="selected"{% endif %}>
-          <a href="{{ cat.get_absolute_url }}">{{ cat.name }}</a>
+  <div class="grid-container">
+    <div class="sidebar">
+      <h2 id="cat">Categories</h2>
+      <ul>
+        <li {% if not category %}class="selected"{% endif %}>
+          <a href="{% url "shop:index" %}">All</a>
         </li>
-      {% endfor %}
-    </ul>
-  </div>
-  <div id="main" class="product-list">
-    <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
-    {% for product in products %}
-      <div class="item">
-        <a href="{{ product.get_absolute_url }}">
-          <img src="{% if product.image %} {{ product.image.url }} {% else %}{% static "image/no_image.jpg" %}{% endif %}">
-        </a>
-        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
-        <br>
-        NGN{{ product.price }}
+        {% for cat in categories %}
+          <li {% if category.slug == cat.slug %}class="selected"{% endif %}>
+            <a href="{{ cat.get_absolute_url }}">{{ cat.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div id="main" class="product-list">
+      <div class="product-title">
+        <h2>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h2>
       </div>
-    {% endfor %}
+        {% for product in products %}
+          <div class="item">
+            <div class="sub-item">
+              <a href="{{ product.get_absolute_url }}">
+                <img style="height: 150px; width: 230px; border: 1px solid black;" src="{% if product.image %} {{ product.image.url }} {% else %}{% static "image/no_image.jpg" %}{% endif %}">
+              </a>
+              <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+              <br>
+              NGN{{ product.price }}
+            </div>
+          </div>
+        {% endfor %}
+    </div>
   </div>
 {% endblock %}
